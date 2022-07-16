@@ -73,15 +73,13 @@ if (swaggerUiRoot) {
         const navigationTreeTagContents = Array.from(tagContents).map(
           (tagContent) => {
             const method = (
-              tagContent.getElementsByClassName(
-                "opblock-summary-method"
-              )[0] as HTMLElement
+              tagContent.querySelector(".opblock-summary-method") as HTMLElement
             ).innerText as Method;
 
             const description = (
-              tagContent.getElementsByClassName(
-                "opblock-summary-description"
-              )[0] as HTMLElement
+              tagContent.querySelector(
+                ".opblock-summary-description"
+              ) as HTMLElement
             ).innerText;
 
             const deprecated =
