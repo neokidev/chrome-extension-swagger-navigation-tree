@@ -23,7 +23,7 @@ const onLoadedSwaggerTagSectionsAndModelContainers = (
       callback(tagSections, modelContainers);
       clearInterval(intervalID);
     }
-  }, 1000);
+  }, 100);
 };
 
 const renderNavigationTree = (items: NavigationTreeItem[]) => {
