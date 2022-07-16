@@ -42,7 +42,7 @@ export const NavigationTree = ({ items }: NavigationTreeProps) => {
               ({ method, description, deprecated }, contentIndex) => (
                 <li key={contentIndex}>
                   <label
-                    className={`py-2 flex items-start hover:bg-gray-200 hover:cursor-pointer hover:text-blue-600 ${
+                    className={`px-4 py-2 flex items-start hover:bg-gray-200 hover:cursor-pointer hover:text-blue-600 ${
                       deprecated && "opacity-60"
                     }`}
                     style={{ marginBottom: "0px" }}
