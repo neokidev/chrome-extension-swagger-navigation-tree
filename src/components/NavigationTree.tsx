@@ -6,6 +6,7 @@ export type NavigationTreeItem = {
   tagName: string;
   tagContents: {
     method: Method;
+    path: string;
     description: string;
     deprecated: boolean;
   }[];
@@ -39,7 +40,7 @@ export const NavigationTree = ({ items }: NavigationTreeProps) => {
         <Accordion.Item key={tagName} label={tagName}>
           <ul>
             {tagContents.map(
-              ({ method, description, deprecated }, contentIndex) => (
+              ({ method, path, description, deprecated }, contentIndex) => (
                 <li key={contentIndex}>
                   <label
                     className={`px-4 py-2 flex items-start hover:bg-gray-200 hover:cursor-pointer hover:text-blue-600 ${
@@ -57,9 +58,12 @@ export const NavigationTree = ({ items }: NavigationTreeProps) => {
                     >
                       {method}
                     </span>
-                    <span
-                      className={deprecated ? "line-through" : undefined}
-                    >{`${description}`}</span>
+                    <span className="block">
+                      <div className={deprecated ? "line-through" : ""}>
+                        {path}
+                      </div>
+                      <div>{description}</div>
+                    </span>
                   </label>
                 </li>
               )

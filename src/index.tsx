@@ -85,8 +85,17 @@ if (swaggerUiRoot) {
             const deprecated =
               tagContent.querySelector(".opblock-deprecated") !== null;
 
+            const path = (
+              tagContent.querySelector(
+                deprecated
+                  ? ".opblock-summary-path__deprecated"
+                  : ".opblock-summary-path"
+              )?.firstElementChild?.firstElementChild as HTMLSpanElement
+            ).innerText;
+
             return {
               method,
+              path,
               description,
               deprecated,
             };
