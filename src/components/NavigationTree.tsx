@@ -32,11 +32,12 @@ export const NavigationTree = ({ items }: NavigationTreeProps) => {
           <ul>
             {tagContents.map(
               ({ method, description, deprecated }, contentIndex) => (
-                <li key={contentIndex} className="hover:cursor-pointer">
+                <li key={contentIndex}>
                   <label
-                    className={`py-3 my-0 flex items-start ${
+                    className={`py-2 flex items-start hover:bg-gray-200 hover:cursor-pointer hover:text-blue-600 ${
                       deprecated && "opacity-60"
                     }`}
+                    style={{ marginBottom: "0px" }}
                   >
                     <span
                       className="mr-2 mt-[1px] rounded text-white font-sans text-[0.5rem] font-semibold min-w-[3.5rem] px-2 text-center"
