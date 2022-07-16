@@ -83,8 +83,7 @@ if (swaggerUiRoot) {
             ).innerText;
 
             const deprecated =
-              tagContent.querySelector("#operations-pet-findPetsByTags") !==
-              null;
+              tagContent.querySelector(".opblock-deprecated") !== null;
 
             return {
               method,
