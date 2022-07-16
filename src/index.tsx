@@ -81,9 +81,13 @@ if (swaggerUiRoot) {
             )[0] as HTMLElement
           ).innerText;
 
+          const deprecated =
+            tagContent.querySelector("#operations-pet-findPetsByTags") !== null;
+
           return {
             method,
             description,
+            deprecated,
           };
         }
       );
