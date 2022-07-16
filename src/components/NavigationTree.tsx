@@ -26,7 +26,15 @@ const DEPRECATED_CONTENT_METHOD_BACKGROUND_COLOR = "#ebebeb";
 
 export const NavigationTree = ({ items }: NavigationTreeProps) => {
   return (
-    <Accordion initialItem={-1} multiple iconPosition="right">
+    <Accordion
+      classNames={{
+        control: "hover:bg-gray-200 hover:text-blue-600",
+        contentInner: "m-0 p-0",
+      }}
+      initialItem={-1}
+      multiple
+      iconPosition="right"
+    >
       {items.map(({ tagName, tagContents }) => (
         <Accordion.Item key={tagName} label={tagName}>
           <ul>
@@ -49,7 +57,9 @@ export const NavigationTree = ({ items }: NavigationTreeProps) => {
                     >
                       {method}
                     </span>
-                    <span>{`${description}`}</span>
+                    <span
+                      className={deprecated ? "line-through" : undefined}
+                    >{`${description}`}</span>
                   </label>
                 </li>
               )
