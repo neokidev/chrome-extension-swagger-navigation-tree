@@ -62,13 +62,13 @@ if (swaggerUiRoot) {
   onLoadedSwaggerTagSectionsAndModelContainers(
     (tagSections, modelContainers) => {
       const navigationTagItems = Array.from(tagSections).map((tagSection) => {
-        const tagName = tagSection.firstElementChild?.getAttribute(
-          "data-tag"
-        ) as string;
+        const tagName = (
+          tagSection.firstElementChild?.firstElementChild
+            ?.firstElementChild as HTMLSpanElement
+        ).innerText as string;
 
-        const tagContents = tagSection.getElementsByClassName(
-          "operation-tag-content"
-        )[0].children;
+        const tagContents = tagSection.querySelector(".opblock")?.parentElement
+          ?.parentElement?.children as HTMLCollection;
 
         const navigationTreeTagContents = Array.from(tagContents).map(
           (tagContent) => {
