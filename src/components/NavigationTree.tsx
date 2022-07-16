@@ -1,4 +1,4 @@
-import { Accordion } from "@mantine/core";
+import { Accordion, List, Text } from "@mantine/core";
 
 export type Method = "GET" | "POST" | "PUT" | "DELETE";
 
@@ -25,11 +25,14 @@ const METHOD_BACKGROUND_COLORS = {
 
 const DEPRECATED_CONTENT_METHOD_BACKGROUND_COLOR = "#ebebeb";
 
+const TEXT_COLOR = "#3b4151";
+const LINK_COLOR = "#4990e2";
+
 export const NavigationTree = ({ items }: NavigationTreeProps) => {
   return (
     <Accordion
       classNames={{
-        control: "hover:bg-gray-200 hover:text-blue-600",
+        control: `hover:bg-gray-200 text-[${TEXT_COLOR}] hover:text-blue-500`,
         contentInner: "m-0 p-0",
       }}
       initialItem={-1}
@@ -38,18 +41,17 @@ export const NavigationTree = ({ items }: NavigationTreeProps) => {
     >
       {items.map(({ tagName, tagContents }) => (
         <Accordion.Item key={tagName} label={tagName}>
-          <ul>
+          <List>
             {tagContents.map(
               ({ method, path, description, deprecated }, contentIndex) => (
-                <li key={contentIndex}>
-                  <label
-                    className={`px-4 py-2 flex items-start hover:bg-gray-200 hover:cursor-pointer hover:text-blue-600 ${
+                <List.Item key={contentIndex}>
+                  <div
+                    className={`px-4 py-1 flex items-start text-[${TEXT_COLOR}] hover:bg-gray-200 hover:cursor-pointer hover:text-blue-500 ${
                       deprecated && "opacity-60"
                     }`}
-                    style={{ marginBottom: "0px" }}
                   >
                     <span
-                      className="mr-2 mt-[1px] rounded text-white font-sans text-[0.5rem] font-semibold min-w-[3.5rem] px-2 text-center"
+                      className="mr-2 mt-1 rounded text-white font-sans text-[0.5rem] font-semibold min-w-[3.5rem] px-2 text-center"
                       style={{
                         background: deprecated
                           ? DEPRECATED_CONTENT_METHOD_BACKGROUND_COLOR
@@ -58,17 +60,25 @@ export const NavigationTree = ({ items }: NavigationTreeProps) => {
                     >
                       {method}
                     </span>
-                    <span className="block">
-                      <div className={deprecated ? "line-through" : ""}>
+                    <span>
+                      <Text
+                        className={
+                          deprecated
+                            ? "line-through font-[monospace]"
+                            : "font-[monospace]"
+                        }
+                      >
                         {path}
-                      </div>
-                      <div>{description}</div>
+                      </Text>
+                      <Text className="text-[13px]" weight={300}>
+                        {description}
+                      </Text>
                     </span>
-                  </label>
-                </li>
+                  </div>
+                </List.Item>
               )
             )}
-          </ul>
+          </List>
         </Accordion.Item>
       ))}
     </Accordion>
