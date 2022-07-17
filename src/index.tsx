@@ -26,6 +26,12 @@ const onLoadedSwaggerTagSectionsAndModelContainers = (
   }, 100);
 };
 
+const wrapNodeWithDivTag = (node: Node): HTMLDivElement => {
+  const wrapper = document.createElement("div");
+  node.parentNode?.insertBefore(wrapper, node);
+  return wrapper;
+};
+
 const renderNavigationTree = (items: NavigationTreeItem[]) => {
   const swaggerUiMain = document.querySelector(
     "#swagger-ui > section > div.swagger-ui"
@@ -35,25 +41,32 @@ const renderNavigationTree = (items: NavigationTreeItem[]) => {
     swaggerUiMain.style.width = `calc(100% - ${NAVIGATION_TREE_WIDTH})`;
     swaggerUiMain.style.overflow = "scroll";
 
-    const wrapper = document.createElement("div");
+    const wrapper = wrapNodeWithDivTag(swaggerUiMain);
     wrapper.style.display = "flex";
     wrapper.style.height = "calc(100vh - 100px)";
 
-    const navigationTreeContainer = document.createElement("div");
-    navigationTreeContainer.style.display = "flex";
-    navigationTreeContainer.style.flexDirection = "column";
-    navigationTreeContainer.style.width = NAVIGATION_TREE_WIDTH;
-    navigationTreeContainer.style.overflow = "scroll";
+    const navigationTreeRoot = document.createElement("div");
+    navigationTreeRoot.style.display = "flex";
+    navigationTreeRoot.style.flexDirection = "column";
+    navigationTreeRoot.style.width = NAVIGATION_TREE_WIDTH;
+    navigationTreeRoot.style.overflow = "scroll";
 
-    swaggerUiMain.parentNode?.insertBefore(wrapper, swaggerUiMain);
-
-    const root = createRoot(wrapper.appendChild(navigationTreeContainer));
-    root.render(
+    createRoot(navigationTreeRoot).render(
       <StrictMode>
-        <NavigationTree items={items} />
+        <NavigationTree
+          items={items}
+          onContentClicked={(_, { id }) => {
+            // TODO: fix this hardcode
+            const target = document.getElementById(id) as HTMLElement;
+            const scrollTop = swaggerUiMain.scrollTop;
+            swaggerUiMain.scrollTop =
+              scrollTop + target.getBoundingClientRect().top - 110; // 110 = header height + alpha
+          }}
+        />
       </StrictMode>
     );
-    wrapper.appendChild(swaggerUiMain);
+
+    wrapper.append(navigationTreeRoot, swaggerUiMain);
   }
 };
 
@@ -72,6 +85,8 @@ if (swaggerUiRoot) {
 
         const navigationTreeTagContents = Array.from(tagContents).map(
           (tagContent) => {
+            const id = (tagContent.firstElementChild as HTMLDivElement).id;
+
             const method = (
               tagContent.querySelector(".opblock-summary-method") as HTMLElement
             ).innerText as Method;
@@ -94,6 +109,7 @@ if (swaggerUiRoot) {
             ).innerText;
 
             return {
+              id,
               method,
               path,
               description,

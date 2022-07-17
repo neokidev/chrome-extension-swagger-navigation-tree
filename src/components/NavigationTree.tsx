@@ -2,18 +2,25 @@ import { Accordion, List, Text } from "@mantine/core";
 
 export type Method = "GET" | "POST" | "PUT" | "DELETE";
 
+type NavigationTreeTagContent = {
+  id: string;
+  method: Method;
+  path: string;
+  description: string;
+  deprecated: boolean;
+};
+
 export type NavigationTreeItem = {
   tagName: string;
-  tagContents: {
-    method: Method;
-    path: string;
-    description: string;
-    deprecated: boolean;
-  }[];
+  tagContents: NavigationTreeTagContent[];
 };
 
 type NavigationTreeProps = {
   items: NavigationTreeItem[];
+  onContentClicked: (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    tagContent: NavigationTreeTagContent
+  ) => void;
 };
 
 const METHOD_BACKGROUND_COLORS = {
@@ -28,7 +35,10 @@ const DEPRECATED_CONTENT_METHOD_BACKGROUND_COLOR = "#ebebeb";
 const TEXT_COLOR = "#3b4151";
 const LINK_COLOR = "#4990e2";
 
-export const NavigationTree = ({ items }: NavigationTreeProps) => {
+export const NavigationTree = ({
+  items,
+  onContentClicked,
+}: NavigationTreeProps) => {
   return (
     <Accordion
       classNames={{
@@ -42,42 +52,41 @@ export const NavigationTree = ({ items }: NavigationTreeProps) => {
       {items.map(({ tagName, tagContents }) => (
         <Accordion.Item key={tagName} label={tagName}>
           <List>
-            {tagContents.map(
-              ({ method, path, description, deprecated }, contentIndex) => (
-                <List.Item key={contentIndex}>
-                  <div
-                    className={`px-4 py-1 flex items-start text-[${TEXT_COLOR}] hover:bg-gray-200 hover:cursor-pointer hover:text-blue-500 ${
-                      deprecated && "opacity-60"
-                    }`}
+            {tagContents.map((tagContent) => (
+              <List.Item key={tagContent.id}>
+                <div
+                  className={`px-4 py-1 flex items-start text-[${TEXT_COLOR}] hover:bg-gray-200 hover:cursor-pointer hover:text-blue-500 ${
+                    tagContent.deprecated && "opacity-60"
+                  }`}
+                  onClick={(event) => onContentClicked(event, tagContent)}
+                >
+                  <span
+                    className="mr-2 mt-1 rounded text-white font-sans text-[0.5rem] font-semibold min-w-[3.5rem] px-2 text-center"
+                    style={{
+                      background: tagContent.deprecated
+                        ? DEPRECATED_CONTENT_METHOD_BACKGROUND_COLOR
+                        : METHOD_BACKGROUND_COLORS[tagContent.method],
+                    }}
                   >
-                    <span
-                      className="mr-2 mt-1 rounded text-white font-sans text-[0.5rem] font-semibold min-w-[3.5rem] px-2 text-center"
-                      style={{
-                        background: deprecated
-                          ? DEPRECATED_CONTENT_METHOD_BACKGROUND_COLOR
-                          : METHOD_BACKGROUND_COLORS[method],
-                      }}
+                    {tagContent.method}
+                  </span>
+                  <span>
+                    <Text
+                      className={
+                        tagContent.deprecated
+                          ? "line-through font-[monospace]"
+                          : "font-[monospace]"
+                      }
                     >
-                      {method}
-                    </span>
-                    <span>
-                      <Text
-                        className={
-                          deprecated
-                            ? "line-through font-[monospace]"
-                            : "font-[monospace]"
-                        }
-                      >
-                        {path}
-                      </Text>
-                      <Text className="text-[13px]" weight={300}>
-                        {description}
-                      </Text>
-                    </span>
-                  </div>
-                </List.Item>
-              )
-            )}
+                      {tagContent.path}
+                    </Text>
+                    <Text className="text-[13px]" weight={300}>
+                      {tagContent.description}
+                    </Text>
+                  </span>
+                </div>
+              </List.Item>
+            ))}
           </List>
         </Accordion.Item>
       ))}
