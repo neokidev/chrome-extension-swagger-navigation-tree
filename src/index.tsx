@@ -84,10 +84,17 @@ if (swaggerUiRoot) {
       const navigationTagItems = Array.from(tagSections).map((tagSection) => {
         const tagId = (tagSection.firstElementChild as HTMLHeadingElement).id;
 
-        const tagName = (
+        const name = (
           tagSection.firstElementChild?.firstElementChild
             ?.firstElementChild as HTMLSpanElement
         ).innerText as string;
+
+        const descriptionElement = tagSection.firstElementChild?.children[1]
+          .firstElementChild as HTMLDivElement;
+        const description = descriptionElement.firstElementChild
+          ? (descriptionElement.firstElementChild as HTMLParagraphElement)
+              .innerText
+          : descriptionElement.innerText;
 
         const tagContents = tagSection.querySelector(".opblock")?.parentElement
           ?.parentElement?.children as HTMLCollection;
@@ -130,7 +137,8 @@ if (swaggerUiRoot) {
 
         return {
           id: tagId,
-          tagName,
+          name,
+          description,
           tagContents: navigationTreeTagContents,
         };
       });

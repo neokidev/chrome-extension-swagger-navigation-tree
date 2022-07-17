@@ -1,4 +1,4 @@
-import { Accordion, List, Text } from "@mantine/core";
+import { Accordion, Group, List, Text } from "@mantine/core";
 import { useEffect, useRef } from "react";
 
 export type Method = "GET" | "POST" | "PUT" | "DELETE";
@@ -13,7 +13,8 @@ type NavigationTreeTagContent = {
 
 export type NavigationTreeItem = {
   id: string;
-  tagName: string;
+  name: string;
+  description: string;
   tagContents: NavigationTreeTagContent[];
 };
 
@@ -37,6 +38,26 @@ const DEPRECATED_CONTENT_METHOD_BACKGROUND_COLOR = "#ebebeb";
 
 const TEXT_COLOR = "#3b4151";
 const LINK_COLOR = "#4990e2";
+
+interface AccordionLabelProps {
+  name: string;
+  description: string;
+}
+
+const AccordionLabel = ({ name, description }: AccordionLabelProps) => {
+  return (
+    <Group noWrap>
+      <div>
+        <Text className="font-[sans-serif]" size="lg">
+          {name}
+        </Text>
+        <Text className="text-[13px]" weight={300}>
+          {description}
+        </Text>
+      </div>
+    </Group>
+  );
+};
 
 export const NavigationTree = ({
   items,
@@ -63,10 +84,12 @@ export const NavigationTree = ({
       multiple
       iconPosition="right"
     >
-      {items.map(({ tagName, tagContents }) => (
+      {items.map(({ name, description, tagContents }) => (
         <Accordion.Item
-          key={tagName}
-          label={tagName}
+          key={name}
+          label={
+            <AccordionLabel key={name} name={name} description={description} />
+          }
           controlRef={(instance) => controlRefs.current.push(instance)}
         >
           <List>
