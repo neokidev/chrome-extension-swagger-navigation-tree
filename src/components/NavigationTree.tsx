@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 
 export type Method = "GET" | "POST" | "PUT" | "DELETE";
 
-type NavigationTreeTagContent = {
+export type NavigationTreeTagContent = {
   id: string;
   method: Method;
   path: string;

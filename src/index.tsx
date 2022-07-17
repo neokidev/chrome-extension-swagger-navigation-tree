@@ -4,6 +4,7 @@ import {
   Method,
   NavigationTree,
   NavigationTreeItem,
+  NavigationTreeTagContent,
 } from "./components/NavigationTree";
 import "./index.css";
 
@@ -32,49 +33,39 @@ const wrapNodeWithDivTag = (node: Node): HTMLDivElement => {
   return wrapper;
 };
 
+const onNavigationTreeItemClicked = (
+  _: MouseEvent | React.MouseEvent<HTMLDivElement, MouseEvent>,
+  { id }: NavigationTreeItem | NavigationTreeTagContent
+) => {
+  const target = document.getElementById(id) as HTMLElement;
+  window.scrollTo(0, window.scrollY + target.getBoundingClientRect().top - 8);
+};
+
 const renderNavigationTree = (items: NavigationTreeItem[]) => {
-  const swaggerUiMain = document.querySelector(
-    "#swagger-ui > section > div.swagger-ui"
-  ) as HTMLElement;
+  const swaggerUiRoot = document.querySelector("#swagger-ui") as HTMLElement;
+  swaggerUiRoot.style.flex = "1";
 
-  if (swaggerUiMain) {
-    swaggerUiMain.style.width = `calc(100% - ${NAVIGATION_TREE_WIDTH})`;
-    swaggerUiMain.style.overflow = "scroll";
-
-    const wrapper = wrapNodeWithDivTag(swaggerUiMain);
+  const wrapper = wrapNodeWithDivTag(swaggerUiRoot);
     wrapper.style.display = "flex";
-    wrapper.style.height = "calc(100vh - 100px)";
 
     const navigationTreeRoot = document.createElement("div");
-    navigationTreeRoot.style.display = "flex";
-    navigationTreeRoot.style.flexDirection = "column";
     navigationTreeRoot.style.width = NAVIGATION_TREE_WIDTH;
+  navigationTreeRoot.style.height = "100vh";
     navigationTreeRoot.style.overflow = "scroll";
+  navigationTreeRoot.style.position = "sticky";
+  navigationTreeRoot.style.top = "0px";
 
     createRoot(navigationTreeRoot).render(
       <StrictMode>
         <NavigationTree
           items={items}
-          onTitleClicked={(_, { id }) => {
-            // TODO: fix this hardcode
-            const target = document.getElementById(id) as HTMLElement;
-            const scrollTop = swaggerUiMain.scrollTop;
-            swaggerUiMain.scrollTop =
-              scrollTop + target.getBoundingClientRect().top - 110; // 110 = header height + alpha
-          }}
-          onContentClicked={(_, { id }) => {
-            // TODO: fix this hardcode
-            const target = document.getElementById(id) as HTMLElement;
-            const scrollTop = swaggerUiMain.scrollTop;
-            swaggerUiMain.scrollTop =
-              scrollTop + target.getBoundingClientRect().top - 110; // 110 = header height + alpha
-          }}
+        onTitleClicked={onNavigationTreeItemClicked}
+        onContentClicked={onNavigationTreeItemClicked}
         />
       </StrictMode>
     );
 
-    wrapper.append(navigationTreeRoot, swaggerUiMain);
-  }
+  wrapper.append(navigationTreeRoot, swaggerUiRoot);
 };
 
 const swaggerUiRoot = document.getElementById("swagger-ui");
