@@ -55,6 +55,13 @@ const renderNavigationTree = (items: NavigationTreeItem[]) => {
       <StrictMode>
         <NavigationTree
           items={items}
+          onTitleClicked={(_, { id }) => {
+            // TODO: fix this hardcode
+            const target = document.getElementById(id) as HTMLElement;
+            const scrollTop = swaggerUiMain.scrollTop;
+            swaggerUiMain.scrollTop =
+              scrollTop + target.getBoundingClientRect().top - 110; // 110 = header height + alpha
+          }}
           onContentClicked={(_, { id }) => {
             // TODO: fix this hardcode
             const target = document.getElementById(id) as HTMLElement;
@@ -75,6 +82,8 @@ if (swaggerUiRoot) {
   onLoadedSwaggerTagSectionsAndModelContainers(
     (tagSections, modelContainers) => {
       const navigationTagItems = Array.from(tagSections).map((tagSection) => {
+        const tagId = (tagSection.firstElementChild as HTMLHeadingElement).id;
+
         const tagName = (
           tagSection.firstElementChild?.firstElementChild
             ?.firstElementChild as HTMLSpanElement
@@ -85,7 +94,8 @@ if (swaggerUiRoot) {
 
         const navigationTreeTagContents = Array.from(tagContents).map(
           (tagContent) => {
-            const id = (tagContent.firstElementChild as HTMLDivElement).id;
+            const contentId = (tagContent.firstElementChild as HTMLDivElement)
+              .id;
 
             const method = (
               tagContent.querySelector(".opblock-summary-method") as HTMLElement
@@ -109,7 +119,7 @@ if (swaggerUiRoot) {
             ).innerText;
 
             return {
-              id,
+              id: contentId,
               method,
               path,
               description,
@@ -119,6 +129,7 @@ if (swaggerUiRoot) {
         );
 
         return {
+          id: tagId,
           tagName,
           tagContents: navigationTreeTagContents,
         };

@@ -1,4 +1,5 @@
 import { Accordion, List, Text } from "@mantine/core";
+import { useEffect, useRef } from "react";
 
 export type Method = "GET" | "POST" | "PUT" | "DELETE";
 
@@ -11,13 +12,15 @@ type NavigationTreeTagContent = {
 };
 
 export type NavigationTreeItem = {
+  id: string;
   tagName: string;
   tagContents: NavigationTreeTagContent[];
 };
 
 type NavigationTreeProps = {
   items: NavigationTreeItem[];
-  onContentClicked: (
+  onTitleClicked?: (event: MouseEvent, tagSection: NavigationTreeItem) => void;
+  onContentClicked?: (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     tagContent: NavigationTreeTagContent
   ) => void;
@@ -37,8 +40,19 @@ const LINK_COLOR = "#4990e2";
 
 export const NavigationTree = ({
   items,
+  onTitleClicked,
   onContentClicked,
 }: NavigationTreeProps) => {
+  const controlRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  useEffect(() => {
+    controlRefs.current.forEach((ref, index) => {
+      if (ref && onTitleClicked) {
+        ref.onclick = (event) => onTitleClicked(event, items[index]);
+      }
+    });
+  }, [items, onTitleClicked]);
+
   return (
     <Accordion
       classNames={{
@@ -50,7 +64,11 @@ export const NavigationTree = ({
       iconPosition="right"
     >
       {items.map(({ tagName, tagContents }) => (
-        <Accordion.Item key={tagName} label={tagName}>
+        <Accordion.Item
+          key={tagName}
+          label={tagName}
+          controlRef={(instance) => controlRefs.current.push(instance)}
+        >
           <List>
             {tagContents.map((tagContent) => (
               <List.Item key={tagContent.id}>
@@ -58,7 +76,11 @@ export const NavigationTree = ({
                   className={`px-4 py-1 flex items-start text-[${TEXT_COLOR}] hover:bg-gray-200 hover:cursor-pointer hover:text-blue-500 ${
                     tagContent.deprecated && "opacity-60"
                   }`}
-                  onClick={(event) => onContentClicked(event, tagContent)}
+                  onClick={
+                    onContentClicked
+                      ? (event) => onContentClicked(event, tagContent)
+                      : undefined
+                  }
                 >
                   <span
                     className="mr-2 mt-1 rounded text-white font-sans text-[0.5rem] font-semibold min-w-[3.5rem] px-2 text-center"
