@@ -1,4 +1,4 @@
-import { Accordion, Group, List, Text } from "@mantine/core";
+import { Accordion, Center, Container, Group, List, Text } from "@mantine/core";
 import { useEffect, useRef } from "react";
 
 export type Method = "GET" | "POST" | "PUT" | "DELETE";
@@ -48,10 +48,8 @@ const AccordionLabel = ({ name, description }: AccordionLabelProps) => {
   return (
     <Group noWrap>
       <div>
-        <Text className="font-[sans-serif]" size="lg">
-          {name}
-        </Text>
-        <Text className="text-[13px]" weight={300}>
+        <Text>{name}</Text>
+        <Text size="xs" weight={300} color="gray">
           {description}
         </Text>
       </div>
@@ -76,9 +74,18 @@ export const NavigationTree = ({
 
   return (
     <Accordion
-      classNames={{
-        control: `hover:bg-gray-200 text-[${TEXT_COLOR}] hover:text-blue-500`,
-        contentInner: "m-0 p-0",
+      styles={{
+        control: {
+          color: TEXT_COLOR,
+          "&:hover": {
+            backgroundColor: "rgb(229 231 235)",
+            color: "rgb(59 130 246)",
+          },
+        },
+        contentInner: {
+          margin: 0,
+          padding: 0,
+        },
       }}
       initialItem={-1}
       multiple
@@ -92,44 +99,52 @@ export const NavigationTree = ({
           }
           controlRef={(instance) => controlRefs.current.push(instance)}
         >
-          <List>
+          <List listStyleType="none">
             {tagContents.map((tagContent) => (
               <List.Item key={tagContent.id}>
-                <div
-                  className={`px-4 py-1 flex items-start text-[${TEXT_COLOR}] hover:bg-gray-200 hover:cursor-pointer hover:text-blue-500 ${
-                    tagContent.deprecated && "opacity-60"
-                  }`}
+                <Container
+                  sx={{
+                    padding: "0.125rem 1rem",
+                    display: "flex",
+                    alignItems: "start",
+                    color: TEXT_COLOR,
+                    "&:hover": {
+                      backgroundColor: "rgb(229 231 235)",
+                      cursor: "pointer",
+                      color: "rgb(59 130 246)",
+                    },
+                  }}
                   onClick={
                     onContentClicked
                       ? (event) => onContentClicked(event, tagContent)
                       : undefined
                   }
                 >
-                  <span
-                    className="mr-2 mt-1 rounded text-white font-sans text-[0.5rem] font-semibold min-w-[3.5rem] px-2 text-center"
-                    style={{
-                      background: tagContent.deprecated
-                        ? DEPRECATED_CONTENT_METHOD_BACKGROUND_COLOR
-                        : METHOD_BACKGROUND_COLORS[tagContent.method],
-                    }}
-                  >
-                    {tagContent.method}
-                  </span>
-                  <span>
-                    <Text
-                      className={
-                        tagContent.deprecated
-                          ? "line-through font-[monospace]"
-                          : "font-[monospace]"
-                      }
+                  <div style={{ display: "flex" }}>
+                    <Center
+                      style={{
+                        marginTop: "0.3rem",
+                        width: "3rem",
+                        height: "0.8rem",
+                        borderRadius: "0.2rem",
+                        fontSize: "0.5rem",
+                        fontWeight: 600,
+                        color: "white",
+                        backgroundColor: tagContent.deprecated
+                          ? DEPRECATED_CONTENT_METHOD_BACKGROUND_COLOR
+                          : METHOD_BACKGROUND_COLORS[tagContent.method],
+                      }}
                     >
-                      {tagContent.path}
-                    </Text>
-                    <Text className="text-[13px]" weight={300}>
-                      {tagContent.description}
-                    </Text>
-                  </span>
-                </div>
+                      {tagContent.method}
+                    </Center>
+                    <div style={{ marginLeft: "0.375rem", flex: "1" }}>
+                      <Text size="sm">{tagContent.path}</Text>
+                      <Text size="xs" weight={300} color="gray">
+                        {tagContent.description}
+                      </Text>
+                    </div>
+                  </div>
+                </Container>
               </List.Item>
             ))}
           </List>
