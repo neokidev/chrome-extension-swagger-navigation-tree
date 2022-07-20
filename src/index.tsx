@@ -7,26 +7,29 @@ import {
   NavigationTreeTagContent,
 } from "./components/NavigationTree";
 
-const NAVIGATION_TREE_WIDTH = "260px";
+const NAVIGATION_TREE_WIDTH = "16.25rem";
 
 const onLoadedSwaggerTagSectionsAndModelContainers = (
   callback: (
-    tagSections: HTMLCollectionOf<Element>,
-    modelContainers: HTMLCollectionOf<Element>
+    tagSections: HTMLCollectionOf<HTMLDivElement>,
+    modelContainers: HTMLCollectionOf<HTMLDivElement>
   ) => void
 ) => {
-  const intervalID = setInterval(() => {
+  const intervalId = setInterval(() => {
     const tagSections = document.getElementsByClassName("opblock-tag-section");
     const modelContainers = document.getElementsByClassName("model-container");
 
     if (tagSections.length && modelContainers.length) {
-      callback(tagSections, modelContainers);
-      clearInterval(intervalID);
+      callback(
+        tagSections as HTMLCollectionOf<HTMLDivElement>,
+        modelContainers as HTMLCollectionOf<HTMLDivElement>
+      );
+      clearInterval(intervalId);
     }
   }, 100);
 };
 
-const wrapNodeWithDivTag = (node: Node): HTMLDivElement => {
+const wrapNodeWithDivElement = (node: Node): HTMLDivElement => {
   const wrapper = document.createElement("div");
   node.parentNode?.insertBefore(wrapper, node);
   return wrapper;
@@ -36,33 +39,35 @@ const onNavigationTreeItemClicked = (
   _: MouseEvent | React.MouseEvent<HTMLDivElement, MouseEvent>,
   { id }: NavigationTreeItem | NavigationTreeTagContent
 ) => {
-  const target = document.getElementById(id) as HTMLElement;
+  const target = document.getElementById(id) as
+    | HTMLDivElement
+    | HTMLHeadingElement;
   window.scrollTo(0, window.scrollY + target.getBoundingClientRect().top - 8);
 };
 
 const renderNavigationTree = (items: NavigationTreeItem[]) => {
-  const swaggerUiRoot = document.querySelector("#swagger-ui") as HTMLElement;
+  const swaggerUiRoot = document.querySelector("#swagger-ui") as HTMLDivElement;
   swaggerUiRoot.style.flex = "1";
 
-  const wrapper = wrapNodeWithDivTag(swaggerUiRoot);
-    wrapper.style.display = "flex";
+  const wrapper = wrapNodeWithDivElement(swaggerUiRoot);
+  wrapper.style.display = "flex";
 
-    const navigationTreeRoot = document.createElement("div");
-    navigationTreeRoot.style.width = NAVIGATION_TREE_WIDTH;
+  const navigationTreeRoot = document.createElement("div");
+  navigationTreeRoot.style.width = NAVIGATION_TREE_WIDTH;
   navigationTreeRoot.style.height = "100vh";
-    navigationTreeRoot.style.overflow = "scroll";
+  navigationTreeRoot.style.overflow = "scroll";
   navigationTreeRoot.style.position = "sticky";
   navigationTreeRoot.style.top = "0px";
 
-    createRoot(navigationTreeRoot).render(
-      <StrictMode>
-        <NavigationTree
-          items={items}
+  createRoot(navigationTreeRoot).render(
+    <StrictMode>
+      <NavigationTree
+        items={items}
         onTitleClicked={onNavigationTreeItemClicked}
         onContentClicked={onNavigationTreeItemClicked}
-        />
-      </StrictMode>
-    );
+      />
+    </StrictMode>
+  );
 
   wrapper.append(navigationTreeRoot, swaggerUiRoot);
 };
@@ -95,13 +100,15 @@ if (swaggerUiRoot) {
               .id;
 
             const method = (
-              tagContent.querySelector(".opblock-summary-method") as HTMLElement
+              tagContent.querySelector(
+                ".opblock-summary-method"
+              ) as HTMLSpanElement
             ).innerText as Method;
 
             const description = (
               tagContent.querySelector(
                 ".opblock-summary-description"
-              ) as HTMLElement
+              ) as HTMLDivElement
             ).innerText;
 
             const deprecated =
