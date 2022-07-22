@@ -1,4 +1,4 @@
-import { Accordion, Center, Container, Group, List, Text } from "@mantine/core";
+import { Accordion, Container, Group, List, Text } from "@mantine/core";
 import { useEffect, useRef } from "react";
 
 export type Method = "GET" | "POST" | "PUT" | "DELETE";
@@ -39,24 +39,6 @@ const DEPRECATED_CONTENT_METHOD_BACKGROUND_COLOR = "#ebebeb";
 const TEXT_COLOR = "#3b4151";
 const LINK_COLOR = "#4990e2";
 
-interface AccordionLabelProps {
-  name: string;
-  description: string;
-}
-
-const AccordionLabel = ({ name, description }: AccordionLabelProps) => {
-  return (
-    <Group noWrap>
-      <div>
-        <Text>{name}</Text>
-        <Text size="xs" weight={300} color="gray">
-          {description}
-        </Text>
-      </div>
-    </Group>
-  );
-};
-
 export const NavigationTree = ({
   items,
   onTitleClicked,
@@ -91,12 +73,10 @@ export const NavigationTree = ({
       multiple
       iconPosition="right"
     >
-      {items.map(({ name, description, tagContents }) => (
+      {items.map(({ name, tagContents }) => (
         <Accordion.Item
           key={name}
-          label={
-            <AccordionLabel key={name} name={name} description={description} />
-          }
+          label={name}
           controlRef={(instance) => controlRefs.current.push(instance)}
         >
           <List listStyleType="none">
@@ -104,7 +84,7 @@ export const NavigationTree = ({
               <List.Item key={tagContent.id}>
                 <Container
                   sx={{
-                    padding: "0.125rem 1rem",
+                    padding: "0.25rem 1rem",
                     display: "flex",
                     alignItems: "start",
                     color: TEXT_COLOR,
@@ -120,29 +100,37 @@ export const NavigationTree = ({
                       : undefined
                   }
                 >
-                  <div style={{ display: "flex" }}>
-                    <Center
+                  <div
+                    style={{
+                      display: "flex",
+                      opacity: tagContent.deprecated ? 0.6 : 1.0,
+                    }}
+                  >
+                    <Text
                       style={{
-                        marginTop: "0.3rem",
-                        width: "3rem",
-                        height: "0.8rem",
-                        borderRadius: "0.2rem",
-                        fontSize: "0.5rem",
-                        fontWeight: 600,
-                        color: "white",
-                        backgroundColor: tagContent.deprecated
+                        fontSize: "11px",
+                        width: "3.5rem",
+                        color: tagContent.deprecated
                           ? DEPRECATED_CONTENT_METHOD_BACKGROUND_COLOR
                           : METHOD_BACKGROUND_COLORS[tagContent.method],
+                        transform: "translateY(0.125rem)",
                       }}
+                      weight={600}
                     >
                       {tagContent.method}
-                    </Center>
-                    <div style={{ marginLeft: "0.375rem", flex: "1" }}>
-                      <Text size="sm">{tagContent.path}</Text>
-                      <Text size="xs" weight={300} color="gray">
-                        {tagContent.description}
-                      </Text>
-                    </div>
+                    </Text>
+                    <Text
+                      style={{
+                        flex: 1,
+                        textDecoration: tagContent.deprecated
+                          ? "line-through"
+                          : "none",
+                      }}
+                      size="sm"
+                      weight={400}
+                    >
+                      {tagContent.path}
+                    </Text>
                   </div>
                 </Container>
               </List.Item>
