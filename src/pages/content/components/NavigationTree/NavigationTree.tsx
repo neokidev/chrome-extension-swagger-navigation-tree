@@ -59,6 +59,7 @@ export const NavigationTree = ({
       styles={{
         control: {
           color: TEXT_COLOR,
+          padding: "0.5rem 1rem",
           "&:hover": {
             backgroundColor: "rgb(229 231 235)",
             color: "rgb(59 130 246)",
