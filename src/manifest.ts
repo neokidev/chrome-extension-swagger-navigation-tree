@@ -9,6 +9,8 @@ const manifest: ManifestType = {
     .join(" "),
   version: packageJson.version,
   description: packageJson.description,
+  permissions: ["scripting", "tabs"],
+  host_permissions: ["<all_urls>"],
   options_page: "src/pages/options/index.html",
   background: { service_worker: "src/pages/background/index.js" },
   action: {
@@ -21,13 +23,6 @@ const manifest: ManifestType = {
   icons: {
     "128": "icon-128.png",
   },
-  content_scripts: [
-    {
-      matches: ["http://*/*", "https://*/*", "<all_urls>"],
-      js: ["src/pages/content/index.js"],
-      css: ["assets/css/contentStyle.chunk.css"],
-    },
-  ],
   devtools_page: "src/pages/devtools/index.html",
   web_accessible_resources: [
     {
