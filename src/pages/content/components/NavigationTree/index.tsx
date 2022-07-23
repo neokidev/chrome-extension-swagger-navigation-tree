@@ -5,7 +5,7 @@ import {
   NavigationTree,
   NavigationTreeItem,
   NavigationTreeTagContent,
-} from "./components/NavigationTree";
+} from "./NavigationTree";
 
 const NAVIGATION_TREE_WIDTH = "16.25rem";
 
