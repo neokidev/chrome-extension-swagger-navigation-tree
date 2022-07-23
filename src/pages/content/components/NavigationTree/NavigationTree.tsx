@@ -35,9 +35,9 @@ const METHOD_BACKGROUND_COLORS = {
 };
 
 const DEPRECATED_CONTENT_METHOD_BACKGROUND_COLOR = "#ebebeb";
-
+const BACKGROUND_COLOR_ON_HOVER = "#ecedf0";
 const TEXT_COLOR = "#3b4151";
-const LINK_COLOR = "#4990e2";
+const TEXT_COLOR_ON_HOVER = "#2563eb";
 
 export const NavigationTree = ({
   items,
@@ -61,8 +61,8 @@ export const NavigationTree = ({
           color: TEXT_COLOR,
           padding: "0.5rem 1rem",
           "&:hover": {
-            backgroundColor: "rgb(229 231 235)",
-            color: "rgb(59 130 246)",
+            backgroundColor: BACKGROUND_COLOR_ON_HOVER,
+            color: TEXT_COLOR_ON_HOVER,
           },
         },
         contentInner: {
@@ -90,9 +90,9 @@ export const NavigationTree = ({
                     alignItems: "start",
                     color: TEXT_COLOR,
                     "&:hover": {
-                      backgroundColor: "rgb(229 231 235)",
+                      backgroundColor: BACKGROUND_COLOR_ON_HOVER,
+                      color: TEXT_COLOR_ON_HOVER,
                       cursor: "pointer",
-                      color: "rgb(59 130 246)",
                     },
                   }}
                   onClick={
