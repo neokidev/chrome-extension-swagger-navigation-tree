@@ -109,7 +109,7 @@ export const NavigationTree = ({
                     <Text
                       style={{
                         fontSize: "11px",
-                        width: "3.5rem",
+                        width: "3rem",
                         color: tagContent.deprecated
                           ? DEPRECATED_CONTENT_METHOD_BACKGROUND_COLOR
                           : METHOD_BACKGROUND_COLORS[tagContent.method],
