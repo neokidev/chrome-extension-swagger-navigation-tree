@@ -1,48 +1,46 @@
-import { GeneralSection } from "./GeneralSection";
-import { ModelsSection } from "./ModelsSection";
-
-export type Method = "GET" | "POST" | "PUT" | "DELETE";
-
-export type NavigationTreeTagContent = {
-  id: string;
-  method: Method;
-  path: string;
-  description: string;
-  deprecated: boolean;
-};
-
-export type NavigationTreeItem = {
-  id: string;
-  name: string;
-  description: string;
-  tagContents: NavigationTreeTagContent[];
-};
+import {
+  GeneralSection,
+  NavigationTreeTagContent,
+  NavigationTreeTagSectionItem,
+} from "./GeneralSection";
+import { ModelsSection, NavigationTreeModel } from "./ModelsSection";
 
 type NavigationTreeProps = {
-  items: NavigationTreeItem[];
-  onTitleClicked?: (event: MouseEvent, tagSection: NavigationTreeItem) => void;
+  tagSectionItems: NavigationTreeTagSectionItem[];
+  models: NavigationTreeModel[];
+  onTitleClicked?: (
+    event: MouseEvent,
+    tagSection: NavigationTreeTagSectionItem
+  ) => void;
   onContentClicked?: (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     tagContent: NavigationTreeTagContent
   ) => void;
+  onModelClicked?: (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    model: NavigationTreeModel
+  ) => void;
 };
 
 export const NavigationTree = ({
-  items,
+  tagSectionItems,
+  models,
   onTitleClicked,
   onContentClicked,
+  onModelClicked,
 }: NavigationTreeProps) => {
   return (
     <div style={{}}>
       <GeneralSection
         style={{ marginTop: "0.5rem", marginBottom: "1rem" }}
-        items={items}
+        tagSectionItems={tagSectionItems}
         onTitleClicked={onTitleClicked}
         onContentClicked={onContentClicked}
       />
       <ModelsSection
         style={{ marginTop: "0.5rem", marginBottom: "1rem" }}
-        items={["1", "2", "3"]}
+        models={models}
+        onModelClicked={onModelClicked}
       />
     </div>
   );

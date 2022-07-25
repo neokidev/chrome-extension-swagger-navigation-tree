@@ -5,28 +5,32 @@ import {
   TEXT_COLOR,
   TEXT_COLOR_ON_HOVER,
 } from "./constants";
-import { NavigationTreeTagContent } from "./NavigationTree";
 import { SectionTitle } from "./SectionTitle";
+
+export type NavigationTreeModel = {
+  id: string;
+  name: string;
+};
 
 type ModelsSectionProps = {
   style?: CSSProperties;
-  items: string[];
+  models: NavigationTreeModel[];
   onModelClicked?: (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    tagContent: NavigationTreeTagContent
+    model: NavigationTreeModel
   ) => void;
 };
 
 export const ModelsSection = ({
   style,
-  items,
+  models,
   onModelClicked,
 }: ModelsSectionProps) => {
   return (
     <div style={style}>
       <SectionTitle title="models" />
       <List listStyleType="none">
-        {items.map((tagContent, index) => (
+        {models.map((model, index) => (
           <List.Item key={index}>
             <Container
               sx={{
@@ -40,9 +44,14 @@ export const ModelsSection = ({
                   cursor: "pointer",
                 },
               }}
+              onClick={
+                onModelClicked
+                  ? (event) => onModelClicked(event, model)
+                  : undefined
+              }
             >
               <Text size="sm" weight={400}>
-                {tagContent}
+                {model.name}
               </Text>
             </Container>
           </List.Item>

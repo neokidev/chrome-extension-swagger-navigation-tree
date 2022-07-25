@@ -7,13 +7,32 @@ import {
   TEXT_COLOR,
   TEXT_COLOR_ON_HOVER,
 } from "./constants";
-import { NavigationTreeItem, NavigationTreeTagContent } from "./NavigationTree";
 import { SectionTitle } from "./SectionTitle";
+
+export type Method = "GET" | "POST" | "PUT" | "DELETE";
+
+export type NavigationTreeTagContent = {
+  id: string;
+  method: Method;
+  path: string;
+  description: string;
+  deprecated: boolean;
+};
+
+export type NavigationTreeTagSectionItem = {
+  id: string;
+  name: string;
+  description: string;
+  tagContents: NavigationTreeTagContent[];
+};
 
 type GeneralSectionProps = {
   style?: CSSProperties;
-  items: NavigationTreeItem[];
-  onTitleClicked?: (event: MouseEvent, tagSection: NavigationTreeItem) => void;
+  tagSectionItems: NavigationTreeTagSectionItem[];
+  onTitleClicked?: (
+    event: MouseEvent,
+    tagSectionItem: NavigationTreeTagSectionItem
+  ) => void;
   onContentClicked?: (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     tagContent: NavigationTreeTagContent
@@ -22,7 +41,7 @@ type GeneralSectionProps = {
 
 export const GeneralSection = ({
   style,
-  items,
+  tagSectionItems,
   onTitleClicked,
   onContentClicked,
 }: GeneralSectionProps) => {
@@ -31,10 +50,10 @@ export const GeneralSection = ({
   useEffect(() => {
     controlRefs.current.forEach((ref, index) => {
       if (ref && onTitleClicked) {
-        ref.onclick = (event) => onTitleClicked(event, items[index]);
+        ref.onclick = (event) => onTitleClicked(event, tagSectionItems[index]);
       }
     });
-  }, [items, onTitleClicked]);
+  }, [tagSectionItems, onTitleClicked]);
 
   return (
     <div style={style}>
@@ -58,7 +77,7 @@ export const GeneralSection = ({
         multiple
         iconPosition="right"
       >
-        {items.map(({ name, tagContents }) => (
+        {tagSectionItems.map(({ name, tagContents }) => (
           <Accordion.Item
             key={name}
             label={name}

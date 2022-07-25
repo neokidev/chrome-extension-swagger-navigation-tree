@@ -2,10 +2,11 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import {
   Method,
-  NavigationTree,
-  NavigationTreeItem,
   NavigationTreeTagContent,
-} from "./NavigationTree";
+  NavigationTreeTagSectionItem,
+} from "./GeneralSection";
+import { NavigationTreeModel } from "./ModelsSection";
+import { NavigationTree } from "./NavigationTree";
 
 const NAVIGATION_TREE_WIDTH = "16.25rem";
 
@@ -37,7 +38,12 @@ const wrapNodeWithDivElement = (node: Node): HTMLDivElement => {
 
 const onNavigationTreeItemClicked = (
   _: MouseEvent | React.MouseEvent<HTMLDivElement, MouseEvent>,
-  { id }: NavigationTreeItem | NavigationTreeTagContent
+  {
+    id,
+  }:
+    | NavigationTreeTagSectionItem
+    | NavigationTreeTagContent
+    | NavigationTreeModel
 ) => {
   const target = document.getElementById(id) as
     | HTMLDivElement
@@ -45,7 +51,10 @@ const onNavigationTreeItemClicked = (
   window.scrollTo(0, window.scrollY + target.getBoundingClientRect().top - 8);
 };
 
-const renderNavigationTree = (items: NavigationTreeItem[]) => {
+const renderNavigationTree = (
+  tagSectionItems: NavigationTreeTagSectionItem[],
+  models: NavigationTreeModel[]
+) => {
   const swaggerUiRoot = document.querySelector("#swagger-ui") as HTMLDivElement;
   swaggerUiRoot.style.flex = "1";
 
@@ -62,9 +71,11 @@ const renderNavigationTree = (items: NavigationTreeItem[]) => {
   createRoot(navigationTreeRoot).render(
     <StrictMode>
       <NavigationTree
-        items={items}
+        tagSectionItems={tagSectionItems}
+        models={models}
         onTitleClicked={onNavigationTreeItemClicked}
         onContentClicked={onNavigationTreeItemClicked}
+        onModelClicked={onNavigationTreeItemClicked}
       />
     </StrictMode>
   );
@@ -76,71 +87,87 @@ const swaggerUiRoot = document.getElementById("swagger-ui");
 if (swaggerUiRoot) {
   onLoadedSwaggerTagSectionsAndModelContainers(
     (tagSections, modelContainers) => {
-      const navigationTagItems = Array.from(tagSections).map((tagSection) => {
-        const tagId = (tagSection.firstElementChild as HTMLHeadingElement).id;
+      const navigationTreeTagSectionItems = Array.from(tagSections).map(
+        (tagSection) => {
+          const tagId = (tagSection.firstElementChild as HTMLHeadingElement).id;
 
-        const name = (
-          tagSection.firstElementChild?.firstElementChild
-            ?.firstElementChild as HTMLSpanElement
-        ).innerText as string;
+          const name = (
+            tagSection.firstElementChild?.firstElementChild
+              ?.firstElementChild as HTMLSpanElement
+          ).innerText as string;
 
-        const descriptionElement = tagSection.firstElementChild?.children[1]
-          .firstElementChild as HTMLDivElement;
-        const description = descriptionElement.firstElementChild
-          ? (descriptionElement.firstElementChild as HTMLParagraphElement)
-              .innerText
-          : descriptionElement.innerText;
+          const descriptionElement = tagSection.firstElementChild?.children[1]
+            .firstElementChild as HTMLDivElement;
+          const description = descriptionElement.firstElementChild
+            ? (descriptionElement.firstElementChild as HTMLParagraphElement)
+                .innerText
+            : descriptionElement.innerText;
 
-        const tagContents = tagSection.querySelector(".opblock")?.parentElement
-          ?.parentElement?.children as HTMLCollection;
+          const tagContents = tagSection.querySelector(".opblock")
+            ?.parentElement?.parentElement?.children as HTMLCollection;
 
-        const navigationTreeTagContents = Array.from(tagContents).map(
-          (tagContent) => {
-            const contentId = (tagContent.firstElementChild as HTMLDivElement)
-              .id;
+          const navigationTreeTagContents = Array.from(tagContents).map(
+            (tagContent) => {
+              const contentId = (tagContent.firstElementChild as HTMLDivElement)
+                .id;
 
-            const method = (
-              tagContent.querySelector(
-                ".opblock-summary-method"
-              ) as HTMLSpanElement
-            ).innerText as Method;
+              const method = (
+                tagContent.querySelector(
+                  ".opblock-summary-method"
+                ) as HTMLSpanElement
+              ).innerText as Method;
 
-            const description = (
-              tagContent.querySelector(
-                ".opblock-summary-description"
-              ) as HTMLDivElement
-            ).innerText;
+              const description = (
+                tagContent.querySelector(
+                  ".opblock-summary-description"
+                ) as HTMLDivElement
+              ).innerText;
 
-            const deprecated =
-              tagContent.querySelector(".opblock-deprecated") !== null;
+              const deprecated =
+                tagContent.querySelector(".opblock-deprecated") !== null;
 
-            const path = (
-              tagContent.querySelector(
-                deprecated
-                  ? ".opblock-summary-path__deprecated"
-                  : ".opblock-summary-path"
-              )?.firstElementChild?.firstElementChild as HTMLSpanElement
-            ).innerText;
+              const path = (
+                tagContent.querySelector(
+                  deprecated
+                    ? ".opblock-summary-path__deprecated"
+                    : ".opblock-summary-path"
+                )?.firstElementChild?.firstElementChild as HTMLSpanElement
+              ).innerText;
 
-            return {
-              id: contentId,
-              method,
-              path,
-              description,
-              deprecated,
-            };
-          }
-        );
+              return {
+                id: contentId,
+                method,
+                path,
+                description,
+                deprecated,
+              };
+            }
+          );
 
-        return {
-          id: tagId,
-          name,
-          description,
-          tagContents: navigationTreeTagContents,
-        };
-      });
+          return {
+            id: tagId,
+            name,
+            description,
+            tagContents: navigationTreeTagContents,
+          };
+        }
+      );
 
-      renderNavigationTree(navigationTagItems);
+      const navigationTreeModel = Array.from(modelContainers).map(
+        (modelContainer) => {
+          const modelId = modelContainer.id;
+          const name = (
+            modelContainer.querySelector(".model-title") as HTMLSpanElement
+          ).innerText;
+
+          return {
+            id: modelId,
+            name,
+          };
+        }
+      );
+
+      renderNavigationTree(navigationTreeTagSectionItems, navigationTreeModel);
     }
   );
 }
