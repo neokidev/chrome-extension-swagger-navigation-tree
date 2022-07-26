@@ -1,26 +1,70 @@
-import React from "react";
-import logo from "@assets/img/logo.svg";
-import "@pages/popup/Popup.css";
+import { useForm } from "@mantine/form";
+import {
+  Group,
+  Box,
+  Text,
+  Button,
+  Container,
+  Title,
+  Divider,
+} from "@mantine/core";
+import { randomId } from "@mantine/hooks";
+import { useCallback } from "react";
+import { SwaggerUrlField } from "./components/SwaggerUrlField/SwaggerUrlField";
 
-const Popup = () => {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/pages/popup/Popup.jsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React!
-        </a>
-      </header>
-    </div>
-  );
+export type SwaggerUrlType = {
+  url: string;
+  enabled: boolean;
+  key: string;
 };
+
+export type FormType = {
+  swaggerUrls: SwaggerUrlType[];
+};
+
+const createInitialSwaggerUrl = () => ({
+  url: "",
+  enabled: true,
+  key: randomId(),
+});
+
+function Popup() {
+  const form = useForm({
+    initialValues: {
+      swaggerUrls: [createInitialSwaggerUrl()],
+    },
+  });
+
+  const handleClickAddButton = useCallback(
+    () => form.insertListItem("swaggerUrls", createInitialSwaggerUrl()),
+    []
+  );
+
+  return (
+    <Container p="lg">
+      <Title order={2} align="center">
+        Swagger URL List
+      </Title>
+
+      <Divider my="md" />
+
+      <Box sx={{ maxWidth: 500 }} mx="auto">
+        {form.values.swaggerUrls.length === 0 && (
+          <Text color="dimmed" align="center" size="sm">
+            No one here...
+          </Text>
+        )}
+
+        {form.values.swaggerUrls.map((item, index) => (
+          <SwaggerUrlField key={index} form={form} item={item} index={index} />
+        ))}
+
+        <Group position="center" mt="md">
+          <Button onClick={handleClickAddButton}>Add Swagger URL</Button>
+        </Group>
+      </Box>
+    </Container>
+  );
+}
 
 export default Popup;
