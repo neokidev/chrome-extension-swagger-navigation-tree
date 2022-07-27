@@ -9,7 +9,7 @@ import {
   Divider,
 } from "@mantine/core";
 import { randomId } from "@mantine/hooks";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { SwaggerUrlField } from "./components/SwaggerUrlField/SwaggerUrlField";
 
 export type SwaggerUrlType = {
@@ -39,6 +39,24 @@ function Popup() {
     () => form.insertListItem("swaggerUrls", createInitialSwaggerUrl()),
     []
   );
+
+  useEffect(() => {
+    if (typeof chrome.storage === "undefined") return;
+
+    chrome.storage.local.get("swaggerUrls").then(({ swaggerUrls }) =>
+      // TODO: isValidSwaggerUrls(swaggerUrls) &&
+      form.setValues({ swaggerUrls })
+    );
+  }, []);
+
+  useEffect(() => {
+    console.log("changed form");
+    const { swaggerUrls } = form.values;
+    console.log("chrome.storage.local:", chrome.storage.local);
+    chrome.storage.local.set({ swaggerUrls }, () => {
+      console.log("'SwaggerUrls' is set to ", swaggerUrls);
+    });
+  }, [form]);
 
   return (
     <Container p="lg">

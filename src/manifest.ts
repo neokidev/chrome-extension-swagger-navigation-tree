@@ -9,7 +9,7 @@ const manifest: ManifestType = {
     .join(" "),
   version: packageJson.version,
   description: packageJson.description,
-  permissions: ["scripting", "tabs"],
+  permissions: ["scripting", "storage", "tabs"],
   host_permissions: ["<all_urls>"],
   options_page: "src/pages/options/index.html",
   background: { service_worker: "src/pages/background/index.js" },
