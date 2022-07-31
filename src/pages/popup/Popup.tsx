@@ -43,9 +43,10 @@ function Popup() {
   useEffect(() => {
     if (typeof chrome.storage === "undefined") return;
 
-    chrome.storage.local.get("swaggerUrls").then(({ swaggerUrls }) =>
-      // TODO: isValidSwaggerUrls(swaggerUrls) &&
-      form.setValues({ swaggerUrls })
+    chrome.storage.local
+      .get("swaggerUrls")
+      .then(
+        ({ swaggerUrls }) => swaggerUrls && form.setValues({ swaggerUrls })
     );
   }, []);
 
