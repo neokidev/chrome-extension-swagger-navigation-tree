@@ -1,5 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { sleep } from "../../utils";
 import {
   Method,
   NavigationTreeTagContent,
@@ -36,7 +37,7 @@ const wrapNodeWithDivElement = (node: Node): HTMLDivElement => {
   return wrapper;
 };
 
-const onNavigationTreeItemClicked = (
+const onNavigationTreeItemClicked = async (
   _: MouseEvent | React.MouseEvent<HTMLDivElement, MouseEvent>,
   {
     id,
@@ -48,6 +49,24 @@ const onNavigationTreeItemClicked = (
   const target = document.getElementById(id) as
     | HTMLDivElement
     | HTMLHeadingElement;
+
+  if (target.classList.contains("opblock-tag")) {
+    if (!target.parentElement.classList.contains("is-open")) {
+      target.click();
+    }
+  } else if (target.classList.contains("opblock")) {
+    if (!target.classList.contains("is-open")) {
+      (target.firstElementChild.firstElementChild as HTMLDivElement).click();
+    }
+  } else {
+    // TODO: Allow contents of models section to be expanded.
+  }
+
+  // When you click on a content, it expands while animating.
+  // This may cause it to move slightly out of position from the content when scrolling immediately after clicking.
+  // Here, wait long enough for animation before scrolling.
+  await sleep(100);
+
   window.scrollTo(0, window.scrollY + target.getBoundingClientRect().top - 8);
 };
 
