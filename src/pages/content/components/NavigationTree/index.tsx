@@ -59,7 +59,10 @@ const onNavigationTreeItemClicked = async (
       (target.firstElementChild.firstElementChild as HTMLDivElement).click();
     }
   } else {
-    // TODO: Allow contents of models section to be expanded.
+    const expandingButton = target.querySelector("span.model-box > button");
+    if (expandingButton) {
+      (expandingButton as HTMLButtonElement).click();
+    }
   }
 
   // When you click on a content, it expands while animating.
