@@ -59,7 +59,10 @@ const onNavigationTreeItemClicked = async (
       (target.firstElementChild.firstElementChild as HTMLDivElement).click();
     }
   } else {
-    const expandingButton = target.querySelector("span.model-box > button");
+    const expandingButton =
+      target.querySelector("span.model-box > span:nth-child(1)") ||
+      target.querySelector("span.model-box > button");
+
     if (expandingButton) {
       (expandingButton as HTMLButtonElement).click();
     }
